@@ -14,15 +14,13 @@ Resulting model is relatively small due to embeddings table pruning (138MB), wor
 
 ## Usage 
 
-First download and install the model:
-
+First download and install the model.
 ```bash
 wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz
 pip install ru_core_news_md-2.3.0.tar.gz
 ```
 
 SpaCy 2.3.* is required, model won't work with SpaCy 2.1, 2.2. 
-
 ```python
 >>> import spacy
 # Use ipymarkup for NER and syntax visualization
@@ -229,7 +227,7 @@ spacy train --base-model train/base --n-iter 10 ru train/model train/data/nerus-
 
 ## Package
 
-Update `meta.json` with description, authors, sources. On model name:
+Update `meta.json` with description, authors, sources. On model name `core_news_md`:
 - `core` — provides all three: tagger, parser and ner;
 - `news` — trained on Nerus that is large automatically annotated news corpus;
 - `md` — in SpaCy small models are 10-50MB in size, `md` - 50-200MB, `lg` - 200-600MB, out model is ~140MB.
@@ -258,7 +256,7 @@ Update `meta.json` with description, authors, sources. On model name:
 }
 ```
 
-Use spacy package and python sdist to produce tar.gz archive.
+Use `spacy package` and `python sdist` to produce tar.gz archive.
 ```bash
 mkdir package
 spacy package {dir} package
