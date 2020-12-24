@@ -1,13 +1,61 @@
 
-from os.path import join
-from itertools import islice as head
-from collections import Counter
+import re
+import gzip
+import json
 import unicodedata
+from os.path import join, exists, expanduser
+from itertools import islice as head
+from collections import defaultdict, Counter
 
+import boto3
+import pandas as pd
 from tqdm.auto import tqdm as log_progress
+from matplotlib import pyplot as plt
 
 from nerus import load_nerus
 from navec import Navec
+
+
+#######
+#
+#   IO
+#
+#####
+
+
+def load_json(path):
+    with open(path) as file:
+        return json.load(file)
+
+
+def dump_json(data, path):
+    with open(path, 'w') as file:
+        json.dump(data, file)
+
+
+def dump_gz_lines(lines, path):
+    with gzip.open(path, 'wt') as file:
+        for line in lines:
+            file.write(line + '\n')
+
+
+def load_lines(path):
+    with open(path) as file:
+        for line in file:
+            yield line.rstrip('\n')
+
+
+#########
+#
+#   CONST
+#
+#####
+
+
+config = {}
+path = expanduser('~/.natasha-spacy.json')
+if exists(path):
+    config = load_json(path)
 
 
 DATA_DIR = 'data'
@@ -17,9 +65,27 @@ NERUS = join(NATASHA_DIR, 'nerus_lenta.conllu.gz')
 NAVEC = join(NATASHA_DIR, 'navec_hudlit_v1_12B_500K_300d_100q.tar')
 
 ADAPT_DIR = join(DATA_DIR, 'adapt')
-TRAIN = join(ADAPT_DIR, 'nerus-train.conllu')
-TEST = join(ADAPT_DIR, 'nerus-test.conllu')
+TRAIN = join(ADAPT_DIR, 'nerus-train.conllu.gz')
+DEV = join(ADAPT_DIR, 'nerus-dev.conllu.gz')
 EMB = join(ADAPT_DIR, 'navec.12B.300d.txt')
+
+S3_TRAIN = join(DATA_DIR, 'nerus-train.conllu.gz')
+S3_DEV = join(DATA_DIR, 'nerus-dev.conllu.gz')
+S3_EMB = join(DATA_DIR, 'navec.12B.300d.txt.gz')
+
+TRAIN_DIR = 'train'
+LOGS_DIR = join(TRAIN_DIR, 'logs')
+MODELS_DIR = join(TRAIN_DIR, 'models')
+META = 'meta'
+
+GZ = '.gz'
+JSON = '.json'
+
+S3_KEY_ID = config.get('s3_key_id')
+S3_KEY = config.get('s3_key')
+S3_BUCKET = 'natasha-spacy'
+S3_REGION = 'us-east-1'
+S3_ENDPOINT = 'https://storage.yandexcloud.net'
 
 
 ########
@@ -140,22 +206,6 @@ def projective_sent(sent):
     return deps_projective(deps)
 
 
-def find_token_bounds(text, tokens):
-    offset = 0
-    for token in tokens:
-        start = text.find(token.text, offset)
-        stop = start + len(token.text)
-        offset = stop
-        token.start, token.stop = start, stop
-
-
-def token_misc(text, token):
-    misc = {'Tag': token.tag}
-    if token.stop < len(text) and not text[token.stop].isspace():
-        misc['SpacyAfter'] = 'No'
-    return misc
-
-
 def rename_feat(key, value):
     if key == 'Variant':
         key = 'StyleVariant'
@@ -180,24 +230,19 @@ def rename_feats(feats):
 
 def adapt_nerus(docs):
     for doc in docs:
-        # ~13% gets removed
+        # ~13% nonprojective
         doc.sents = [
             _ for _ in doc.sents
             if projective_sent(_)
         ]
 
         for sent in doc.sents:
-
             sent.text = norm_unicode(sent.text)
             for token in sent.tokens:
                 token.text = norm_unicode(token.text)
-            find_token_bounds(sent.text, sent.tokens)
-
-            for token in sent.tokens:
-                token.feats = rename_feats(token.feats)
                 # 3% sents change match pos rel, 0.3% tokens
                 token.pos, token.rel = match_pos_rel(token.pos, token.rel)
-                token.misc = token_misc(sent.text, token)
+                token.feats = rename_feats(token.feats)
 
         yield doc
 
@@ -227,17 +272,100 @@ def format_conll(docs):
             yield f'# text = {sent.text}'
             for token in sent.tokens:
                 feats = format_feats(token.feats)
-                misc = format_feats(token.misc)
                 yield (
                     f'{token.id}\t{token.text}\t_'  # no lemma
                     f'\t{token.pos}\t_\t{feats}'  # just pos, no xpos
                     f'\t{token.head_id}\t{token.rel}\t_'  # just deprel, no deps
-                    f'\t{misc}'
+                    f'\t{token.tag}'  # Tag=O -> O
                 )
             yield ''
 
 
-def dump_lines(lines, path):
-    with open(path, 'w') as file:
-        for line in lines:
-            file.write(line + '\n')
+########
+#
+#   S3
+#
+#######
+
+
+class S3:
+    __attributes__ = ['key_id', 'key', 'bucket', 'endpoint', 'region']
+
+    def __init__(self, key_id=S3_KEY_ID, key=S3_KEY, bucket=S3_BUCKET,
+                 endpoint=S3_ENDPOINT, region=S3_REGION):
+        self.key_id = key_id
+        self.key = key
+        self.bucket = bucket
+        self.endpoint = endpoint
+        self.region = region
+
+        self.client = boto3.client(
+            's3',
+            aws_access_key_id=key_id,
+            aws_secret_access_key=key,
+            region_name=region,
+            endpoint_url=endpoint,
+        )
+
+    def upload(self, path, key):
+        self.client.upload_file(path, self.bucket, key)
+
+    def download(self, key, path):
+        self.client.download_file(self.bucket, key, path)
+
+
+##########
+#
+#   LOGS
+#
+#####
+
+
+def parse_log(lines):
+    for line in lines:
+        if not re.match('^[\s\d\.]+$', line):
+            continue
+
+        parts = [float(_) for _ in line.split()]
+        _, _, morph, _, uas, las, _, _, _, ner, _, _ = parts
+        yield morph, uas, las, ner
+
+        
+
+def load_log(path):
+    lines = load_lines(path)
+    items = parse_log(lines)
+    return pd.DataFrame(
+        items,
+        columns=['morph', 'uas', 'las', 'ner']
+    )
+    
+
+########
+#
+#   GRID
+#
+######
+
+
+METRICS = ['morph', 'las', 'ner']
+
+
+def load_scores(paths, metrics=METRICS):
+    scores = defaultdict(list)
+    for path in paths:
+        table = load_log(path)
+        for metric in metrics:
+            score = table[metric].max()
+            scores[metric].append(score)
+    return dict(scores)
+
+
+def show_scores(scores, sizes, metrics=METRICS):
+    fig, axes = plt.subplots(1, len(metrics))
+    fig.set_size_inches(5 * len(metrics), 4)
+
+    for metric, ax in zip(metrics, axes):
+        ax.set_title(metric)
+        ax.plot(sizes, scores[metric])
+        ax.scatter(sizes, scores[metric])
