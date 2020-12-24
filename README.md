@@ -1,15 +1,12 @@
 # natasha-spacy
 
-SpaCy official Russian model proposal. Work is heavily inspired and based on @buriy's <a href="https://github.com/buriy/spacy-ru/">spacy-ru</a>. 
+SpaCy official Russian model proposal. Work is heavily inspired and based on <a href="https://github.com/buriy/spacy-ru/">spacy-ru</a> by <a href="http://github.com/buriy/">@buriy</a>. 
 
 Russian model is trained on two resources, both available under MIT license:
-
 1. <a href="https://github.com/natasha/nerus">Nerus</a> — part of <a href="https://github.com/natasha">Natasha project</a>, large silver standard Russian corpus annotated with morphology tags, syntax trees and PER, LOC, ORG NER-tags.
-2. <a href="https://github.com/natasha/navec"></a> — also part of Natasha project, pretrained word embeddings for Russian language.
+2. <a href="https://github.com/natasha/navec">Navec</a> — also part of Natasha project, pretrained word embeddings for Russian language.
 
-Model is relatively small due to embeddings table pruning (138MB), works fast on CPU. Shows near SOTA performance on tasks of morphology tagging and syntax parsing, beating heavy DeepPavlov BERT on news and wiki domains. On NER task model shows quality comparable to other top Russian systems, beating DeepPavlov, PullEnti, Stanza. See Naeval <a href="https://github.com/natasha/naeval#morphology-taggers">morphology</a>, <a href="https://github.com/natasha/naeval#syntax-parser">syntax</a>, and <a href="https://github.com/natasha/naeval#ner">NER</a> sections.
-
-Both Nerus and Navec are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
+Resulting model is relatively small due to embeddings table pruning (138MB), works fast on CPU. Shows near SOTA performance on tasks of morphology tagging and syntax parsing, beating heavy DeepPavlov BERT on news and wiki domains. On NER task model shows quality comparable to other top Russian systems, beating DeepPavlov, PullEnti, Stanza. See Naeval <a href="https://github.com/natasha/naeval#morphology-taggers">morphology</a>, <a href="https://github.com/natasha/naeval#syntax-parser">syntax</a>, and <a href="https://github.com/natasha/naeval#ner">NER</a> sections.
 
 ## Download
 
@@ -19,14 +16,14 @@ Both Nerus and Navec are adapted to fit SpaCy utilities. Training procedure uses
 
 First download and install the model:
 
-```
+```bash
 wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz
 pip install ru_core_news_md-2.3.0.tar.gz
 ```
 
 SpaCy 2.3.* is required, model won't work with SpaCy 2.1, 2.2. 
 
-```
+```python
 >>> import spacy
 # Use ipymarkup for NER and syntax visualization
 >>> from ipymarkup import show_dep_ascii_markup, show_span_ascii_markup
@@ -193,44 +190,51 @@ PER────              LOC────                     ORG────
 
 ## Training
 
-```
-# Initialize the environment. We use SpaCy 2.3 for training, Russian
-# language in SpaCy requires PyMorphy for morphology.
+Both Nerus and Navec are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
+
+Initialize the environment. We use SpaCy 2.3 for training, Russian language in SpaCy requires PyMorphy for morphology.
+```bash
 pip install spacy==2.3.5 pymorphy2==0.8
 mkdir -p data train/data train/base train/model
+```
 
-# 650MB embeddings table. Navec is precomputed on fiction texts, has
-# 500 000 words in vocabulary.
+650MB embeddings table. Navec is precomputed on fiction texts, has 500 000 words in vocabulary.
+```bash
 wget https://storage.yandexcloud.net/natasha-spacy/data/navec.12B.300d.txt.gz -P data
+```
 
-# 1.5GB training data. We use 10% slice of original Nerus, it contains
-# 100 000 documents, 1 000 000 sentences.
+1.5GB training data. We use 10% slice of original Nerus, it contains 100 000 documents, 1 000 000 sentences.
+```bash
 wget https://storage.yandexcloud.net/natasha-spacy/data/nerus-dev.conllu.gz -P data
 wget https://storage.yandexcloud.net/natasha-spacy/data/nerus-train.conllu.gz -P data
 gunzip data/nerus-*.conllu.gz
+```
 
-# WARNING! Conversion requires 32GB of RAM, resulting in JSON that is 4.5GB in size.
-# On average there are 10 sentences per document in Nerus.
+WARNING! Conversion requires 32GB of RAM, resulting in JSON that is 4.5GB in size. 
+```bash
+# --n-sents explanation: on average there are 10 sentences per document in Nerus
 spacy convert --n-sents 10 --morphology data/nerus-train.conllu train/data
 spacy convert --n-sents 10 --morphology data/nerus-dev.conllu train/data
+```
 
-# Original Navec embeddings have 500 000 words in vocabulary. Pruning
-# to 125 000 words we lose just 0.5 percentage points in accuracy.
+Original Navec embeddings have 500 000 words in vocabulary. Pruning to 125 000 words we lose just 0.5 percentage points in accuracy.
+```bash
 spacy init-model ru train/base --vectors-loc data/navec.12B.300d.txt.gz --prune-vectors 125000
+```
 
-# Training takes ~2 hours per iteration
+Training takes ~2 hours per iteration.
+```bash
 spacy train --base-model train/base --n-iter 10 ru train/model train/data/nerus-train.json train/data/nerus-dev.json
-
 ```
 
 ## Package
 
-```
-# Update meta.json with description, authors, sources. On model name:
-#  core - provides all three: tagger, parser and ner;
-#  news - trained on Nerus that is large automatically annotated news corpus;
-#  md - in SpaCy small models are 10-50MB in size, md - 50-200MB, lg - 200-600MB, out model is ~140MB.
+Update `meta.json` with description, authors, sources. On model name:
+- `core` — provides all three: tagger, parser and ner;
+- `news` — trained on Nerus that is large automatically annotated news corpus;
+- `md` — in SpaCy small models are 10-50MB in size, `md` - 50-200MB, `lg` - 200-600MB, out model is ~140MB.
 
+```javascript
 {
   "name": "core_news_md",
   "lang": "ru",
@@ -252,12 +256,13 @@ spacy train --base-model train/base --n-iter 10 ru train/model train/data/nerus-
     }
   ]
 }
+```
 
-# Use spacy package and python sdist to produce tar.gz archive
+Use spacy package and python sdist to produce tar.gz archive.
+```bash
 mkdir package
 spacy package {dir} package
 cd package/*; python setup.py sdist
 mv package/*/dist/*.tar.gz .
 rm -r package
-
 ```
