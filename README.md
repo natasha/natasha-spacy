@@ -220,7 +220,7 @@ Original Navec embeddings have 500 000 words in vocabulary. Pruning to 125 000 w
 spacy init-model ru train/base --vectors-loc data/navec.12B.300d.txt.gz --prune-vectors 125000
 ```
 
-Training takes ~2 hours per iteration.
+Training takes ~2 hours per iteration on CPU (~5 times faster on GPU).
 ```bash
 spacy train --base-model train/base --n-iter 10 ru train/model train/data/nerus-train.json train/data/nerus-dev.json
 ```
