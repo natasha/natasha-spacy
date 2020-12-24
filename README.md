@@ -188,7 +188,7 @@ PER────              LOC────                     ORG────
 
 ## Training
 
-Both Nerus and Navec are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
+Both <a href="https://github.com/natasha/nerus">Nerus</a> and <a href="https://github.com/natasha/navec">Navec</a> are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
 
 Initialize the environment. We use SpaCy 2.3 for training, Russian language in SpaCy requires PyMorphy for morphology.
 ```bash
