@@ -196,12 +196,12 @@ pip install spacy==2.3.5 pymorphy2==0.8
 mkdir -p data train/data train/base train/model
 ```
 
-650MB embeddings table. Navec is precomputed on fiction texts, has 500 000 words in vocabulary.
+Download 650MB embeddings table. Navec is precomputed on fiction texts, has 500 000 words in vocabulary.
 ```bash
 wget https://storage.yandexcloud.net/natasha-spacy/data/navec.12B.300d.txt.gz -P data
 ```
 
-1.5GB training data. We use 10% slice of original Nerus, it contains 100 000 documents, 1 000 000 sentences.
+Download 1.5GB training data. We use 10% slice of original Nerus, it contains 100 000 documents, 1 000 000 sentences.
 ```bash
 wget https://storage.yandexcloud.net/natasha-spacy/data/nerus-dev.conllu.gz -P data
 wget https://storage.yandexcloud.net/natasha-spacy/data/nerus-train.conllu.gz -P data
@@ -241,7 +241,7 @@ Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   
 ## Package
 
 Update `meta.json` with description, authors, sources. On model name `core_news_md`:
-- `core` — provides all three: tagger, parser and ner;
+- `core` — provides all three components: tagger, parser and ner;
 - `news` — trained on Nerus that is large automatically annotated news corpus;
 - `md` — in SpaCy small models are 10-50MB in size, `md` - 50-200MB, `lg` - 200-600MB, out model is ~140MB.
 
@@ -272,8 +272,8 @@ Update `meta.json` with description, authors, sources. On model name `core_news_
 Use `spacy package` and `python sdist` to produce tar.gz archive.
 ```bash
 mkdir package
-spacy package {dir} package
-cd package/*; python setup.py sdist
+spacy package train/model package
+(cd package/* && python setup.py sdist)
 mv package/*/dist/*.tar.gz .
 rm -r package
 ```
