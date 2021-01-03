@@ -277,3 +277,7 @@ spacy package train/model package
 mv package/*/dist/*.tar.gz .
 rm -r package
 ```
+
+## History
+
+2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
