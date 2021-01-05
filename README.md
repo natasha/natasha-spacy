@@ -6,6 +6,8 @@ Russian model is trained on two resources, both available under MIT license:
 1. <a href="https://github.com/natasha/nerus">Nerus</a> — part of <a href="https://github.com/natasha">Natasha project</a>, large silver standard Russian corpus annotated with morphology tags, syntax trees and PER, LOC, ORG NER-tags.
 2. <a href="https://github.com/natasha/navec">Navec</a> — also part of Natasha project, pretrained word embeddings for Russian language.
 
+Code in this repo is also available under MIT license.
+
 Resulting model is relatively small due to embeddings table pruning (138MB), works fast on CPU. Shows near SOTA performance on tasks of morphology tagging and syntax parsing, beating heavy DeepPavlov BERT on news and wiki domains. On NER task model shows quality comparable to other top Russian systems, beating DeepPavlov, PullEnti, Stanza. See Naeval <a href="https://github.com/natasha/naeval#morphology-taggers">morphology</a>, <a href="https://github.com/natasha/naeval#syntax-parser">syntax</a>, and <a href="https://github.com/natasha/naeval#ner">NER</a> sections.
 
 ## Download
