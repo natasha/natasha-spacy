@@ -12,8 +12,8 @@ Resulting model is relatively small due to embeddings table pruning (138MB), wor
 
 ## Download
 
-- <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
-- <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
+- SpaCy 2.3+ <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
+- SpaCy 3.0+ <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
 
 ## Usage 
 
@@ -23,7 +23,7 @@ wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.
 pip install ru_core_news_md-2.3.0.tar.gz
 ```
 
-Model for SpaCy 3 is also available.
+Model for SpaCy 3.0 is also available.
 ```
 wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz
 pip install ru_core_news_md-3.0.0.tar.gz
@@ -293,6 +293,7 @@ Update `meta.json` with description, authors, sources. On model name `core_news_
 
 ```javascript
 {
+  ...
   "name": "core_news_md",
   "lang": "ru",
   "version": "2.3.0",
@@ -326,14 +327,17 @@ rm -r package
 
 ### v3
 
-Change versions, rest is the same.
+Change versions, rest is the same as in v2.
 ```javascript
 {
+  ...
   "version": "3.0.0",
   "spacy_version":">=3.0.0rc2,<3.1.0",
+  ...
 }
 ```
 
+Use SpaCy projects to build package, config is in <a href="https://github.com/natasha/natasha-spacy/blob/master/project/project.yml">project/project.yml</a>.
 ```bash
 spacy project run package
 ```
