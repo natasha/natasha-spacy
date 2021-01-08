@@ -1,0 +1,27 @@
+[38;5;3m⚠ Output directory is not empty[0m
+This can lead to unintended side effects when saving the model. Please use an
+empty directory or a different path instead. If the specified output path
+doesn't exist, the directory will be created for you.
+Training pipeline: ['tagger', 'parser', 'ner']
+Starting with base model 'train/bases/125k'
+Adding component to base model: 'tagger'
+Adding component to base model: 'parser'
+Adding component to base model: 'ner'
+Counting training words (limit=0)
+
+Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   NER F   Token %  CPU WPS
+---  ---------  --------  ---------  ------  ------  ---------  ------  ------  ------  -------  -------
+  1  175801.571    92.750  324195.922  91.297  87.214  33274.739  87.352  89.396  88.362  100.000     2923
+  2  98090.255    94.027  198300.343  92.874  89.766  16755.098  89.744  90.877  90.307  100.000     4873
+  3  83596.469    94.612  170472.750  93.656  90.875  13410.158  90.138  91.382  90.756  100.000     4947
+  4  75419.701    94.974  155232.861  93.965  91.450  11757.663  90.316  91.836  91.070  100.000     4782
+  5  69419.209    95.177  143160.949  94.338  91.980   9825.964  90.900  92.139  91.516  100.000     5151
+  6  64860.869    95.363  133998.337  94.533  92.293   9408.226  90.933  92.173  91.549  100.000     4908
+  7  61274.878    95.489  127522.876  94.713  92.600   8668.065  91.343  92.358  91.848  100.000     4865
+  8  57876.566    95.634  122024.723  94.930  92.858   8260.003  91.490  92.476  91.981  100.000     5100
+  9  55354.461    95.700  117106.633  95.105  93.058   7187.826  91.526  92.358  91.940  100.000     4984
+ 10  53365.867    95.771  112574.368  95.167  93.147   6721.757  91.465  92.173  91.818  100.000     5003
+[38;5;2m✔ Saved model to output directory[0m
+train/models/125k_5k/model-final
+⠙ Creating best model...⠹ Creating best model...⠸ Creating best model...[2K[38;5;2m✔ Created best model[0m
+train/models/125k_5k/model-best

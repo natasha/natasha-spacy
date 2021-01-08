@@ -2,5 +2,3 @@ notes.org
 .ipynb_checkpoints/
 data/
 models/
-train/
-train/logs

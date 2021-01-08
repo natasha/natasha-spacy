@@ -1,0 +1,24 @@
+[38;5;2m✔ Created output directory: train/models/250k_2k[0m
+Training pipeline: ['tagger', 'parser', 'ner']
+Starting with base model 'train/bases/250k'
+Adding component to base model: 'tagger'
+Adding component to base model: 'parser'
+Adding component to base model: 'ner'
+Counting training words (limit=0)
+
+Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   NER F   Token %  CPU WPS
+---  ---------  --------  ---------  ------  ------  ---------  ------  ------  ------  -------  -------
+  1  83936.907    89.974  148325.799  87.555  81.290  15475.891  82.987  84.817  83.892  100.000     2692
+  2  42703.233    91.996  88083.520  90.458  85.932   7438.691  85.327  86.820  86.067  100.000     2583
+  3  33330.387    92.741  71619.860  91.513  87.635   5753.123  86.788  88.234  87.505  100.000     2602
+  4  28236.672    93.129  63000.808  91.976  88.460   4086.870  87.483  88.823  88.148  100.000     2571
+  5  24956.954    93.463  57243.177  92.431  89.116   3234.016  88.316  89.446  88.878  100.000     2589
+  6  22567.173    93.657  53554.848  92.730  89.613   3082.922  88.161  89.244  88.699  100.000     2669
+  7  20931.245    93.778  50024.448  92.994  89.915   2737.448  88.304  89.463  88.880  100.000     3052
+  8  19357.069    93.894  47762.405  93.193  90.225   2292.584  88.362  89.463  88.909  100.000     4570
+  9  18276.998    93.993  44924.615  93.426  90.535   2113.459  88.436  89.463  88.947  100.000     4481
+ 10  17299.725    94.056  43412.810  93.536  90.707   2036.954  88.433  89.564  88.995  100.000     4533
+[38;5;2m✔ Saved model to output directory[0m
+train/models/250k_2k/model-final
+⠙ Creating best model...⠹ Creating best model...⠸ Creating best model...⠼ Creating best model...⠴ Creating best model...⠦ Creating best model...[2K[38;5;2m✔ Created best model[0m
+train/models/250k_2k/model-best

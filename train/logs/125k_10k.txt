@@ -1,0 +1,27 @@
+[38;5;3m⚠ Output directory is not empty[0m
+This can lead to unintended side effects when saving the model. Please use an
+empty directory or a different path instead. If the specified output path
+doesn't exist, the directory will be created for you.
+Training pipeline: ['tagger', 'parser', 'ner']
+Starting with base model 'train/bases/125k'
+Adding component to base model: 'tagger'
+Adding component to base model: 'parser'
+Adding component to base model: 'ner'
+Counting training words (limit=0)
+
+Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   NER F   Token %  CPU WPS
+---  ---------  --------  ---------  ------  ------  ---------  ------  ------  ------  -------  -------
+  1  292663.782    94.161  558076.700  93.019  89.935  57843.226  89.827  91.550  90.680  100.000     5104
+  2  180506.966    95.063  361815.623  94.270  91.820  29528.069  90.824  92.628  91.717  100.000     2808
+  3  155940.539    95.487  313020.854  94.717  92.532  24382.054  91.292  92.998  92.137  100.000     2886
+  4  142080.363    95.817  285709.035  95.071  93.079  21298.398  91.691  93.250  92.464  100.000     2879
+  5  131339.220    95.982  265942.945  95.453  93.544  19064.555  92.138  93.503  92.815  100.000     2902
+  6  124096.239    96.140  251499.854  95.609  93.753  17499.436  92.363  93.435  92.896  100.000     3010
+  7  117791.284    96.268  241089.547  95.776  94.011  16254.368  92.491  93.503  92.994  100.000     5085
+  8  113086.272    96.340  230459.428  95.870  94.148  15365.546  92.597  93.688  93.139  100.000     2665
+  9  108777.537    96.420  224261.092  95.909  94.227  14285.059  92.489  93.688  93.085  100.000     2584
+ 10  105736.021    96.476  216687.098  96.009  94.364  13525.299  92.564  93.654  93.106  100.000     2643
+[38;5;2m✔ Saved model to output directory[0m
+train/models/125k_10k/model-final
+⠙ Creating best model...⠹ Creating best model...⠸ Creating best model...[2K[38;5;2m✔ Created best model[0m
+train/models/125k_10k/model-best
