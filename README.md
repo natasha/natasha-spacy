@@ -290,7 +290,7 @@ We use <a href="https://nightly.spacy.io/usage/projects">SpaCy projects</a>, tra
 Download, uncompress embeddings table and training data.
 ```bash
 spacy project assets
-spacy project extract
+spacy project run extract
 ```
 
 Convert training data for SpaCy binary format. WARNING! 32 GB of RAM is required.
