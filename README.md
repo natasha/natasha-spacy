@@ -13,16 +13,22 @@ Resulting model is relatively small due to embeddings table pruning (138MB), wor
 ## Download
 
 <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
+<a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
 
 ## Usage 
 
-First download and install the model.
+First download and install the model. SpaCy 2.3.* is required, model won't work with SpaCy 2.1, 2.2.
 ```bash
 wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz
 pip install ru_core_news_md-2.3.0.tar.gz
 ```
 
-SpaCy 2.3.* is required, model won't work with SpaCy 2.1, 2.2. 
+Model for SpaCy 3 is also available.
+```
+wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz
+pip install ru_core_news_md-3.0.0.tar.gz
+```
+
 ```python
 >>> import spacy
 # Use ipymarkup for NER and syntax visualization
@@ -192,6 +198,8 @@ PER────              LOC────                     ORG────
 
 Both <a href="https://github.com/natasha/nerus">Nerus</a> and <a href="https://github.com/natasha/navec">Navec</a> are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
 
+### v2
+
 Initialize the environment. We use SpaCy 2.3 for training, Russian language in SpaCy requires PyMorphy for morphology.
 ```bash
 pip install spacy==2.3.5 pymorphy2==0.8
@@ -240,12 +248,48 @@ Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   
  10  848243.402    97.581  1656692.182  97.264  96.035  127838.633  94.981  95.556  95.268  100.000     4395
 ```
 
+### v3
+
+We use <a href="https://nightly.spacy.io/usage/projects">SpaCy projects</a>, training procedure is described in `project/project.yml`.
+
+Download, uncompress embeddings table and training data.
+```bash
+spacy project assets
+spacy project extract
+```
+
+Convert training data for SpaCy binary format. WARNING! 32 GB of RAM is required.
+```bash
+spacy project run corpus
+```
+
+Convert and prune embeddings table.
+```bash
+spacy project run vectors
+```
+
+~2.5 hours per iteration on CPU, requires ~24 GB of RAM.
+```bash
+spacy project run train
+
+E    #       LOSS TOK2VEC  LOSS TAGGER  LOSS PARSER  LOSS NER  TAG_ACC  DEP_UAS  DEP_LAS  SENTS_F  ENTS_F  ENTS_P  ENTS_R  SCORE
+---  ------  ------------  -----------  -----------  --------  -------  -------  -------  -------  ------  ------  ------  ------
+  0       0          0.00       198.77       325.44     95.21    14.05    20.94     6.86     0.00    0.54    4.42    0.29    0.10
+  0   10000    1176499.70    694829.12   1066434.84  124868.43    94.87    94.41    92.26    99.62   90.03   89.68   90.39    0.93
+  0   20000    2768135.49    710927.47   1157628.86  133416.70    95.90    95.36    93.50    99.71   92.12   91.54   92.71    0.94
+  1   30000    4134293.51    609565.16   1005064.56  116021.79    96.34    95.80    94.18    99.71   92.54   91.18   93.94    0.95
+  1   40000    5612606.23    570474.00    943323.94  108390.26    96.55    95.79    94.19    99.77   92.98   92.75   93.22    0.95
+  2   50000    7069821.13    536273.18    895354.35  102616.23    96.68    95.94    94.42    99.71   93.06   92.50   93.62    0.95
+```
+
 ## Package
 
 Update `meta.json` with description, authors, sources. On model name `core_news_md`:
 - `core` — provides all three components: tagger, parser and ner;
 - `news` — trained on Nerus that is large automatically annotated news corpus;
 - `md` — in SpaCy small models are 10-50MB in size, `md` - 50-200MB, `lg` - 200-600MB, out model is ~140MB.
+
+### v2
 
 ```javascript
 {
@@ -280,6 +324,21 @@ mv package/*/dist/*.tar.gz .
 rm -r package
 ```
 
+### v3
+
+Change versions, rest is the same.
+```javascript
+{
+  "version": "3.0.0",
+  "spacy_version":">=3.0.0rc2,<3.1.0",
+}
+```
+
+```bash
+spacy project run package
+```
+
 ## History
 
 2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
+2021-01-08 Support SpaCy v3
