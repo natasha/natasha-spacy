@@ -385,4 +385,4 @@ spacy project run package
 ## History
 
 - 2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
-- 2021-01-08 Support SpaCy v3
+- 2021-01-08 <a href="https://github.com/explosion/spaCy/discussions/6628#discussioncomment-268842">Support SpaCy v3</a>
