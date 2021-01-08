@@ -1,0 +1,90 @@
+title: "SpaCy Russian model"
+
+directories: ["assets", "corpus", "training"]
+
+assets:
+  - url: "https://storage.yandexcloud.net/natasha-spacy/data/navec.12B.300d.txt.gz"
+    dest: "assets/vectors.txt.gz"
+    description: "Navec vectors"
+    checksum: "45eb1858c8316a01be68a6d09f1c16cb"
+  - url: "https://storage.yandexcloud.net/natasha-spacy/data/nerus-train.conllu.gz"
+    dest: "assets/train.conllu.gz"
+    description: "Training data"
+    checksum: "9d2044ee59d09ce9be6f5719e533d481"
+  - url: "https://storage.yandexcloud.net/natasha-spacy/data/nerus-dev.conllu.gz"
+    dest: "assets/dev.conllu.gz"
+    description: "Development data"
+    checksum: "f41459ee9b781187f1456e390bf526fa"
+
+workflows:
+  all:
+    - vectors
+    - corpus
+    - train
+
+commands:
+  - name: extract
+    help: "Uncompress train, dev"
+    script:
+      - "gunzip --keep assets/train.conllu.gz assets/dev.conllu.gz"
+    deps:
+      - "assets/train.conllu.gz"
+      - "assets/dev.conllu.gz"
+    outputs:
+      - "assets/train.conllu"
+      - "assets/dev.conllu"
+
+  - name: config
+    help: "Generate config"
+    script:
+      - "spacy init config --lang ru --pipeline tagger,parser,ner --optimize efficiency -C config.cfg"
+      - "spacy init fill-config config.cfg config.cfg"
+    outputs:
+      - "config.cfg"
+
+  - name: vectors
+    help: "Convert and prune vectors"
+    script:
+      - "spacy init vectors ru assets/vectors.txt.gz training/vectors --prune 125000 --name ru_navec_vectors_md"
+    deps:
+      - "assets/vectors.txt.gz"
+    outputs:
+      - "corpus/vectors"
+
+  - name: corpus
+    help: "Convert the data to spaCy's format"
+    script:
+      - "spacy convert assets/train.conllu corpus --converter conllu --n-sents 10 --morphology"
+      - "spacy convert assets/dev.conllu corpus --converter conllu --n-sents 10 --morphology"
+    deps:
+      - "assets/train.conllu"
+      - "assets/dev.conllu"
+    outputs:
+      - "corpus/train.spacy"
+      - "corpus/dev.spacy"
+
+  - name: train
+    help: "Train the full pipeline"
+    script:
+      - python -m spacy train config.cfg --output training
+    deps:
+      - "config.cfg"
+      - "corpus/vectors"
+      - "corpus/train.spacy"
+      - "corpus/dev.spacy"
+    outputs:
+      - "training/model-best"
+
+  - name: package
+    help: "Package the trained model so it can be installed"
+    script:
+      - "python -m spacy package training/model-best packages --name ru_core_news_md --version 3.0.0 --force"
+    deps:
+      - "training/model-best"
+    outputs_no_cache:
+      - "packages/ru_core_news_md-3.0.0/dist/ru_core_news_md-3.0.0.tar.gz"
+
+  - name: clean
+    help: "Remove intermediate files"
+    script:
+      - "rm -rf training/* corpus/* package/*"
