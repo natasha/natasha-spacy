@@ -1,6 +1,6 @@
 title: "SpaCy Russian model"
 
-directories: ["assets", "corpus", "training"]
+directories: ["assets", "corpus", "training", "package"]
 
 assets:
   - url: "https://storage.yandexcloud.net/natasha-spacy/data/navec.12B.300d.txt.gz"
@@ -15,12 +15,6 @@ assets:
     dest: "assets/dev.conllu.gz"
     description: "Development data"
     checksum: "f41459ee9b781187f1456e390bf526fa"
-
-workflows:
-  all:
-    - vectors
-    - corpus
-    - train
 
 commands:
   - name: extract
@@ -78,11 +72,11 @@ commands:
   - name: package
     help: "Package the trained model so it can be installed"
     script:
-      - "python -m spacy package training/model-best packages --name ru_core_news_md --version 3.0.0 --force"
+      - "python -m spacy package training/model-best package --name core_news_md --version 3.0.0 --force"
     deps:
       - "training/model-best"
     outputs_no_cache:
-      - "packages/ru_core_news_md-3.0.0/dist/ru_core_news_md-3.0.0.tar.gz"
+      - "package/ru_core_news_md-3.0.0/dist/ru_core_news_md-3.0.0.tar.gz"
 
   - name: clean
     help: "Remove intermediate files"
