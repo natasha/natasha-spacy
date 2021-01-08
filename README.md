@@ -12,8 +12,43 @@ Resulting model is relatively small due to embeddings table pruning (138MB), wor
 
 ## Download
 
-- SpaCy 2.3+ <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
-- SpaCy 3.0+ <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
+<table>
+<tr>
+<th>
+Model
+</th>
+<th>
+Size
+</th>
+<th>
+SpaCy version
+</th>
+</tr>
+<tr>
+<td>
+<a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>
+</td>
+<td>
+138MB
+</td>
+<td>
+2.3.* 
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>
+</td>
+<td>
+135MB
+</td>
+<td>
+3.0.*
+</td>
+</tr>
+
+</table>
+
 
 ## Usage 
 
