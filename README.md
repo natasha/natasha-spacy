@@ -12,8 +12,8 @@ Resulting model is relatively small due to embeddings table pruning (138MB), wor
 
 ## Download
 
-<a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
-<a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
+- <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-2.3.0.tar.gz">ru_core_news_md-2.3.0.tar.gz</a>, 138MB
+- <a href="https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.tar.gz">ru_core_news_md-3.0.0.tar.gz</a>, 135MB
 
 ## Usage 
 
@@ -29,9 +29,9 @@ wget https://storage.yandexcloud.net/natasha-spacy/models/ru_core_news_md-3.0.0.
 pip install ru_core_news_md-3.0.0.tar.gz
 ```
 
+Use <a href="https://github.com/natasha/ipymarkup">ipymarkup</a> for NER and syntax visualization.
 ```python
 >>> import spacy
-# Use ipymarkup for NER and syntax visualization
 >>> from ipymarkup import show_dep_ascii_markup, show_span_ascii_markup
 
 >>> nlp = spacy.load('ru_core_news_md')
@@ -196,9 +196,9 @@ PER────              LOC────                     ORG────
 
 ## Training
 
-Both <a href="https://github.com/natasha/nerus">Nerus</a> and <a href="https://github.com/natasha/navec">Navec</a> are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
-
 ### v2
+
+Both <a href="https://github.com/natasha/nerus">Nerus</a> and <a href="https://github.com/natasha/navec">Navec</a> are adapted to fit SpaCy utilities. Training procedure uses only standart `spacy convert`, `spacy init-model`, `spacy train`.
 
 Initialize the environment. We use SpaCy 2.3 for training, Russian language in SpaCy requires PyMorphy for morphology.
 ```bash
@@ -250,7 +250,7 @@ Itn  Tag Loss    Tag %    Dep Loss    UAS     LAS    NER Loss   NER P   NER R   
 
 ### v3
 
-We use <a href="https://nightly.spacy.io/usage/projects">SpaCy projects</a>, training procedure is described in `project/project.yml`.
+We use <a href="https://nightly.spacy.io/usage/projects">SpaCy projects</a>, training procedure is described in <a href="https://github.com/natasha/natasha-spacy/blob/master/project/project.yml">project/project.yml</a>.
 
 Download, uncompress embeddings table and training data.
 ```bash
@@ -340,5 +340,5 @@ spacy project run package
 
 ## History
 
-2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
-2021-01-08 Support SpaCy v3
+- 2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
+- 2021-01-08 Support SpaCy v3
