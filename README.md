@@ -1,3 +1,5 @@
+> #  🎉 Proposal <a href="https://github.com/explosion/spaCy/releases/tag/v3.0.0rc3">got accepted in v3.0.0rc3</a>. See https://nightly.spacy.io/models/ru for official Russian pretrained models.
+
 # natasha-spacy
 
 SpaCy official Russian model proposal. Work is heavily inspired and based on <a href="https://github.com/buriy/spacy-ru/">spacy-ru</a> by <a href="http://github.com/buriy/">@buriy</a>. 
@@ -390,3 +392,4 @@ spacy project run package
 
 - 2020-12-24 <a href="https://github.com/explosion/spaCy/discussions/6628">SpaCy discussion #6628 "Russian model proposal"</a>
 - 2021-01-08 <a href="https://github.com/explosion/spaCy/discussions/6628#discussioncomment-268842">Support SpaCy v3</a>
+- 2021-01-19 <a href="https://github.com/explosion/spaCy/releases/tag/v3.0.0rc3">Proposal accepted in v3.0.0rc3</a>
